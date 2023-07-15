@@ -6,8 +6,8 @@ require PROJECT_ROOT_PATH . "/vendor/autoload.php";
 
 require_once PROJECT_ROOT_PATH . "/controllers/BaseController.php";
 
-$dotenv = Dotenv\Dotenv::createImmutable(PROJECT_ROOT_PATH);
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 
-$dotenv->load();
+$dotenv->safeLoad();
 
 ?>
