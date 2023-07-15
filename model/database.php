@@ -6,7 +6,7 @@ class Database
     public function __construct()
     {
         try {
-            $this->connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE_NAME);
+            $this->connection = new mysqli($_ENV["DB_HOST"], $_ENV["DB_USERNAME"], $_ENV["DB_PASSWORD"], $_ENV["DB_DATABASE_NAME"]);
             if ( mysqli_connect_errno()) {
 
                 throw new Exception("Could not connect to database.");   
@@ -51,7 +51,6 @@ class Database
         } catch(Exception $e) {
             throw New Exception( $e->getMessage() );
         }	
-
     }
 }
 ?>

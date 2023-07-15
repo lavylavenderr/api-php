@@ -1,22 +1,10 @@
 <?php
-require dirname(__FILE__) . "/../" . "/inc/bootstrap.php";
+require __DIR__ . "/inc/bootstrap.php";
 
 $uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 $uri = explode("/", $uri);
 
-if (!isset($uri[1])) {
-    if (!isset($uri[2])) {
-        $msg = json_encode([
-            "success" => false,
-            "message" => "You need to specify an endpoint."
-        ]);
-
-        http_response_code(400);
-        header("Content-Type: application/json");
-        echo $msg;
-        exit();
-    }
-
+if ($uri[1] == "") {
     $msg = json_encode([
         "success" => true,
         "message" => "Welcome to Alexander's API! Take a look around if you'd like :D"
@@ -46,7 +34,7 @@ if (isset($routes[$uri[1]])) {
     } else {
         $msg = json_encode([
             "success" => false,
-            "message" => "Method not found"
+            "message" => "Invalid endpoint"
         ]);
 
         http_response_code(404);

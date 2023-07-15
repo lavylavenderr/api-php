@@ -26,7 +26,7 @@ class UtilController extends BaseController
             "center" => $center,
             "size" => $size,
             "type" => $type,
-            "key" => MAPQUEST
+            "key" => $_ENV["MAPQUEST"]
         ]);
 
         $ch = curl_init();
