@@ -13,10 +13,14 @@ use Predis\Client;
 
 $redis = new Client("tcp://" . $_ENV["REDIS_URL"]);
 
+// Form the Base64 for the Authorization Header
+
 $clientId = $_ENV["SPOTIFY_CLIENT_ID"];
 $clientSecret = $_ENV["SPOTIFY_CLIENT_SECRET"];
 $credentials = $clientId . ':' . $clientSecret;
 $encodedCredentials = base64_encode($credentials);
+
+// Get POST Data Together
 
 $url = "https://accounts.spotify.com/api/token";
 
@@ -33,6 +37,8 @@ $headers = [
     'Accept: application/json'
 ];
 
+// Initialize cURL, pass settings and  data, then execute
+
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -43,6 +49,8 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 $response = curl_exec($ch);
+
+// Decode JSON and set it in Redis
 
 $json = json_decode($response, true);
 
