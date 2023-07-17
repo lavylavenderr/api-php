@@ -54,7 +54,5 @@ $response = curl_exec($ch);
 
 $json = json_decode($response, true);
 
-// Store the tokens in Redis
 $redis->set("accessToken", @$json["access_token"] ?: "");
-$redis->set("refreshToken", @$json["refresh_token"] ?: "");
 ?>
