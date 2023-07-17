@@ -143,40 +143,40 @@ class UtilController extends BaseController
             ["Content-Type: application/json", "HTTP/1.1 200 OK"]
         );
 
-        $this->refreshToken($clientId, $clientSecret);
+        $this->refreshToken();
     }
 
-    private function refreshToken($clientId, $clientSecret)
+    private function refreshToken()
     {
         while (true) {
             sleep(3600);
 
-        $url = "https://accounts.spotify.com/api/token";
+            $url = "https://accounts.spotify.com/api/token";
 
-        $headers = [
-            'Authorization: Basic ' . $this->refreshToken,
-            'Content-Type: application/x-www-form-urlencoded',
-            'Accept: application/json'
-        ];
+            $headers = [
+                'Authorization: Basic ' . $this->refreshToken,
+                'Content-Type: application/x-www-form-urlencoded',
+                'Accept: application/json'
+            ];
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $response = curl_exec($ch);
+            $response = curl_exec($ch);
 
-        $json = json_decode($response, true);
+            $json = json_decode($response, true);
 
-        $this->accessToken = @$json["access_token"] ?: "";
-        $this->refreshToken = @$json["refresh_token"] ?: "";
+            $this->accessToken = @$json["access_token"] ?: "";
+            $this->refreshToken = @$json["refresh_token"] ?: "";
 
-        // Store the tokens in Redis
-        $this->redis->set("accessToken", $this->accessToken);
-        $this->redis->set("refreshToken", $this->refreshToken);
+            // Store the tokens in Redis
+            $this->redis->set("accessToken", $this->accessToken);
+            $this->redis->set("refreshToken", $this->refreshToken);
         }
     }
 
