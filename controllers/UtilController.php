@@ -33,7 +33,7 @@ class UtilController extends BaseController
     public function spotifyLoginAction()
     {
         $clientId = $_ENV["SPOTIFY_CLIENT_ID"];
-        $redirectUri = "http://localhost:8000/util/callback";
+        $redirectUri = $_ENV["REDIRECT_URL"];
 
         $scopes = "user-top-read";
 
@@ -99,7 +99,7 @@ class UtilController extends BaseController
 
         $data = [
             "code" => $code,
-            "redirect_uri" => "http://localhost:8000/util/callback",
+            "redirect_uri" => $_ENV["REDIRECT_URL"],
             "grant_type" => "authorization_code"
         ];
 
