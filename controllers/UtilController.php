@@ -50,7 +50,7 @@ class UtilController extends BaseController
 
     public function toptracksAction()
     {
-        if (empty($this->accessToken)) {
+        if (!$this->redis->exists("accessToken")) {
             $this->sendOutput(
                 json_encode(array("success" => false, "message" => "No Token")),
                 ["Content-Type: application/json", "HTTP/1.1 200 OK"]
