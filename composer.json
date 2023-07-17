@@ -1,5 +1,6 @@
 {
     "require": {
-        "vlucas/phpdotenv": "^5.5"
+        "vlucas/phpdotenv": "^5.5",
+        "predis/predis": "^2.2"
     }
 }
