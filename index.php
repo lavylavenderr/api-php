@@ -7,7 +7,7 @@ $uri = explode("/", $uri);
 if ($uri[1] == "") {
     $msg = json_encode([
         "success" => true,
-        "message" => "Welcome to Alexander's API! Take a look around if you'd like :D"
+        "message" => "Welcome to Alexander's API! Take a look around if you'd like."
     ]);
 
     http_response_code(200);
