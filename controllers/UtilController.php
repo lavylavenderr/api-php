@@ -148,7 +148,8 @@ class UtilController extends BaseController
 
     private function refreshToken($clientId, $clientSecret)
     {
-        sleep(3600);
+        while (true) {
+            sleep(3600);
 
         $url = "https://accounts.spotify.com/api/token";
 
@@ -176,8 +177,7 @@ class UtilController extends BaseController
         // Store the tokens in Redis
         $this->redis->set("accessToken", $this->accessToken);
         $this->redis->set("refreshToken", $this->refreshToken);
-
-        return $this->refreshToken($clientId, $clientSecret);
+        }
     }
 
     public function mapAction()
