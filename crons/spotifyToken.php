@@ -13,10 +13,22 @@ use Predis\Client;
 
 $redis = new Client("tcp://" . $_ENV["REDIS_URL"]);
 
+$clientId = $_ENV["SPOTIFY_CLIENT_ID"];
+$clientSecret = $_ENV["SPOTIFY_CLIENT_SECRET"];
+$credentials = $clientId . ':' . $clientSecret;
+$encodedCredentials = base64_encode($credentials);
+
 $url = "https://accounts.spotify.com/api/token";
 
+$data = [
+    "refresh_token" => $redis->get("refreshToken"),
+    "grant_type" => "refresh_token"
+];
+
+$fields = http_build_query($data);
+
 $headers = [
-    'Authorization: Basic ' . $redis->get("refreshToken"),
+    'Authorization: Basic ' . $encodedCredentials,
     'Content-Type: application/x-www-form-urlencoded',
     'Accept: application/json'
 ];
@@ -27,6 +39,7 @@ curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 $response = curl_exec($ch);
