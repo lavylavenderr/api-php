@@ -52,7 +52,7 @@ class PhoneRouter extends BaseRouter
                     "username" => "Alexander's iPhone",
                     "embeds" => [
                         [
-                            "description" => "<@{$_ENV["DISCORD_ID"]}> has started charging their phone. Current charge is **{$requestData["percentage"]}**",
+                            "description" => "<@{$_ENV["DISCORD_ID"]}> has started charging their phone. Current charge is **{$requestData["percentage"]}%**",
                             "type" => "rich",
                             "color" => hexdec("967bb6")    
                         ]    
@@ -74,7 +74,7 @@ class PhoneRouter extends BaseRouter
                     "username" => "Alexander's iPhone",
                     "embeds" => [
                         [
-                            "description" => "<@{$_ENV["DISCORD_ID"]}> has unplugged their phone. Current charge is **{$requestData["percentage"]}**",
+                            "description" => "<@{$_ENV["DISCORD_ID"]}> has unplugged their phone. Current charge is **{$requestData["percentage"]}%**",
                             "type" => "rich",
                             "color" => hexdec("967bb6")    
                         ]    
@@ -96,7 +96,7 @@ class PhoneRouter extends BaseRouter
                     "username" => "Alexander's iPhone",
                     "embeds" => [
                         [
-                            "description" => "<@{$_ENV["DISCORD_ID"]}> has just made a purchase with Apple Pay totalling to **{$requestData["amount"]}**",
+                            "description" => "<@{$_ENV["DISCORD_ID"]}> has just made a purchase with Apple Pay totalling to **${$requestData["amount"]}**",
                             "type" => "rich",
                             "color" => hexdec("967bb6")    
                         ]    
