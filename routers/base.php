@@ -1,10 +1,10 @@
 <?php
 
-class BaseController
+class BaseRouter
 {
     public function __call($name, $arguments)
     {
-        $this->sendOutput('', array('HTTP/1.1 404 Not Found'));
+        $this->respondWithJson(json_encode(["success" => false, "message" => "Not Found"]), 200);
     }
 
     protected function getUriSegments()
@@ -20,18 +20,13 @@ class BaseController
         return $query;
     }
 
-    protected function sendOutput($data, $httpHeaders = [])
+    static function respondWithJson($data, $statusCode) 
     {
-        header_remove('Set-Cookie');
-        
-        foreach ($httpHeaders as $httpHeader) {
-            header($httpHeader);
-        }
-        
+        http_response_code($statusCode);
+        header("Content-Type: application/json");
         echo $data;
-        exit;
+        exit();
     }
-
 }
 
 ?>

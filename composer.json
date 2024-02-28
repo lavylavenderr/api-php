@@ -1,6 +1,7 @@
 {
     "require": {
         "vlucas/phpdotenv": "^5.5",
-        "predis/predis": "^2.2"
+        "predis/predis": "^2.2",
+        "symfony/http-client": "^7.0"
     }
 }

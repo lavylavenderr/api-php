@@ -3,7 +3,7 @@ class MiscController extends BaseController
 {
     public function __construct()
     {
-        if ($_SERVER["REQUEST_METHOD"] !== "GET") {
+        if ($_SERVER["REQUEST_METHOD"] !== "GET" || $_SERVER["REQUEST_METHOD"] !== "POST") {
             $this->sendOutput(
                 json_encode([
                     'success' => false,
@@ -14,7 +14,7 @@ class MiscController extends BaseController
         }
     }
 
-    public function timeAction()
+    public function time()
     {
         $timezone = new DateTimeZone("America/Los_Angeles");
         $date = new DateTime('now', $timezone);

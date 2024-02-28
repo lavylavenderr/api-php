@@ -1,56 +1,46 @@
 <?php
+// Import everything, set memory & response function
 require dirname(__FILE__) . "/inc/bootstrap.php";
 
+// Parse the request URI
 $uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 $uri = explode("/", $uri);
 
-if ($uri[1] == "") {
+// Index route
+if ($uri[1] === "") {
     $msg = json_encode([
         "success" => true,
         "message" => "Welcome to Alexander's API! Take a look around if you'd like."
     ]);
-
-    http_response_code(200);
-    header("Content-Type: application/json");
-    echo $msg;
-    exit();
+    
+    BaseRouter::respondWithJson($msg, 200);
 }
 
+// Fastify Equivalent of Importing Routers
 $routes = [
-    'misc' => 'MiscController',
-    'util' => 'UtilController'
+    'misc',
+    'spotify',
+    'badge',
+    'weather'
 ];
 
-if (isset($routes[$uri[1]])) {
-    $controllerClass = $routes[$uri[1]];
-    $controllerFile = "{$controllerClass}.php";
-    require PROJECT_ROOT_PATH . "controllers/$controllerFile";
+// Check if the endpoint exists in the routes
+if (in_array($uri[1], $routes)) {
+    $router = ucfirst($uri[1]) . "Router";
+    $routerFile = "{$uri[1]}.php";
+    
+    require_once PROJECT_ROOT_PATH . "routers/{$routerFile}";
 
-    $controllerObject = new $controllerClass();
+    $routerObject = new $router();
 
-    if (isset($uri[2]) && method_exists($controllerObject, $uri[2] . 'Action')) {
-        $methodName = $uri[2] . 'Action';
-        $controllerObject->$methodName();
+    // Check if the method exists in the controller
+    if (isset($uri[2]) && method_exists($routerObject, $uri[2])) {
+        $methodName = $uri[2];
+        $routerObject->$methodName();
     } else {
-        $msg = json_encode([
-            "success" => false,
-            "message" => "Invalid endpoint"
-        ]);
-
-        http_response_code(404);
-        header("Content-Type: application/json");
-        echo $msg;
-        exit();
+        BaseRouter::respondWithJson(json_encode(["success" => false, "message" => "Invalid endpoint"]), 404);
     }
 } else {
-    $msg = json_encode([
-        "success" => false,
-        "message" => "Not Found"
-    ]);
-
-    http_response_code(404);
-    header("Content-Type: application/json");
-    echo $msg;
-    exit();
+    BaseRouter::respondWithJson(json_encode(["success" => false, "message" => "Not Found"]), 404);
 }
 ?>
