@@ -93,7 +93,6 @@ class PhoneRouter extends BaseRouter
         $webhookUrl = $_ENV["PHONE_WEBHOOK"];
         $this->httpClient->request("POST", $webhookUrl, [
             'json' => [
-                    "username" => "Alexander's iPhone",
                     "embeds" => [
                         [
                             "description" => "<@{$_ENV["DISCORD_ID"]}> has just made a purchase with Apple Pay totalling to **{$requestData["amount"]}**",
