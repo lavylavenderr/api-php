@@ -133,8 +133,13 @@ class SpotifyRouter extends BaseRouter
                 'code' => $code
             ]
         ]);
-        $responseData = json_decode($response->getContent(), true);
+        $statusCode = $response->getStatusCode();
 
+        if ($statusCode !== 200) {
+            return $this->respondWithJson(json_encode(["success" => false, "message" => "Invalid response from token server"]), 200);
+        }
+
+        $responseData = json_decode($response->getContent(), true);
         $this->accessToken = @$responseData["access_token"] ?: "";
         $this->refreshToken = @$responseData["refresh_token"] ?: "";
 
