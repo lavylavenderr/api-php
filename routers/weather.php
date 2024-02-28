@@ -35,6 +35,24 @@ class WeatherRouter extends BaseRouter
         $responseData = json_decode($response->getContent(), true);
         return $this->respondWithJson(json_encode($responseData), 200);
     }
+
+    public function taf()
+    {
+        $params = $this->getQueryStringParams() ?: [];
+        $icao = @$params["icao"] ?: "";
+
+        if (empty($icao)) {
+            $this->respondWithJson(json_encode(array("success" => false, "message" => "Invalid ICAO")), 200);
+        }
+
+        $response = $this->httpClient->request("GET", "https://avwx.rest/api/taf/{$icao}", [
+            'headers' => [
+                'Authorization' => $_ENV["AVWX_API"]    
+            ]    
+        ]);
+        $responseData = json_decode($response->getContent(), true);
+        return $this->respondWithJson(json_encode($responseData), 200);
+    }
 }
 
 ?>
