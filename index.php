@@ -21,7 +21,8 @@ $routes = [
     'misc',
     'spotify',
     'badge',
-    'weather'
+    'weather',
+    'phone'
 ];
 
 // Check if the endpoint exists in the routes
