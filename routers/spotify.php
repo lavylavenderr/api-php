@@ -46,6 +46,7 @@ class SpotifyRouter extends BaseRouter
         $responseData = json_decode($response->getContent(), true);
 
         $this->redis->set("accessToken", @$responseData["access_token"] ?: "");
+        $this->redis->set("refreshToken", @$responseData["refresh_token"] ?: "");
         $this->loadTokensFromRedis();
     }
 
