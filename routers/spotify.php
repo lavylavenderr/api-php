@@ -86,11 +86,7 @@ class SpotifyRouter extends BaseRouter
 
         if ($statusCode === 401) {
             $this->refreshTokens($encodedCredentials);
-            $response = @$this->httpClient->request("GET", $url, ['auth_bearer' => $this->accessToken]);
-        }
-
-        if ($statusCode !== 200) {
-            return $this->respondWithJson(json_encode(["success" => false, "message" => "Invalid response from server"]), 200);
+            $response = $this->httpClient->request("GET", $url, ['auth_bearer' => $this->accessToken]);
         }
 
         $responseData = json_decode($response->getContent(), true);
