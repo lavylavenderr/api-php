@@ -70,6 +70,10 @@ class SpotifyRouter extends BaseRouter
 
     public function toptracks()
     {
+        if ($this->redis->exists("topSongs")) {
+            return $this->respondWithJson(json_encode(["success" => true, "data" => json_decode($this->redis->get("topSongs"))]), 200);
+        }
+
         if (!$this->redis->exists("accessToken")) {
             $this->respondWithJson(json_encode(array("success" => false, "message" => "No Token")), 200);
         }
@@ -104,6 +108,7 @@ class SpotifyRouter extends BaseRouter
             ];
         }
 
+        $this->redis->set("topSongs", json_encode($filteredTracks), 'EX', 5 * 60 * 60);
         $this->respondWithJson(json_encode(["success" => true, "data" => $filteredTracks]), 200);
     }
 
