@@ -67,6 +67,51 @@ class SpotifyRouter extends BaseRouter
         exit();
     }
 
+    public function search()
+    {
+        if (!$this->redis->exists("accessToken")) {
+            $this->respondWithJson(json_encode(array("success" => false, "message" => "No Token")), 400);
+        }
+
+        $params = $this->getQueryStringParams() ?: [];
+        $query = @$params["query"] ?: "";
+
+        if (empty($query))
+            return $this->respondWithJson(json_encode(['success' => false, 'message' => 'Missing Query']), 400);
+
+        $userQuery = urlencode($query);
+        $queryURL = "https://api.spotify.com/v1/search?q={$query}&type=track&limit=10";
+        
+        $response = $this->httpClient->request("GET", $queryURL, ['auth_bearer' => $this->accessToken]);
+        $statusCode = $response->getStatusCode();
+
+        if ($statusCode === 401) {
+            $this->refreshTokens($encodedCredentials);
+            $response = $this->httpClient->request("GET", $queryURL, ['auth_bearer' => $this->accessToken]);
+        }
+
+        $responseData = json_decode($response->getContent(), true);
+        $filteredTracks = [];
+
+        foreach ($responseData['tracks']['items'] as $item) {
+            $trackName = $item['name'];
+            $artistName = $item['artists'][0]['name'];
+            $albumCovers = $item['album']['images'];
+            $spotifyId = $item['id'];
+
+            $filteredTracks[] = [
+                'artist' => $artistName,
+                'track' => $trackName,
+                'album_covers' => $albumCovers,
+                'spotifyId' => $spotifyId
+            ];
+        }
+
+        /* https://api.spotify.com/v1/search?q=query&type=track&limit=10 */
+
+        $this->respondWithJson(json_encode(["success" => true, "data" => $filteredTracks]), 200);
+    }
+
     public function toptracks()
     {
         if ($this->redis->exists("topSongs")) {
