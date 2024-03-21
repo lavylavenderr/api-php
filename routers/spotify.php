@@ -81,6 +81,12 @@ class SpotifyRouter extends BaseRouter
 
         $userQuery = urlencode($query);
         $queryURL = "https://api.spotify.com/v1/search?q={$query}&type=track&limit=10";
+
+        $clientId = $_ENV["SPOTIFY_CLIENT_ID"];
+        $clientSecret = $_ENV["SPOTIFY_CLIENT_SECRET"];
+
+        $credentials = $clientId . ':' . $clientSecret;
+        $encodedCredentials = base64_encode($credentials);
         
         $response = $this->httpClient->request("GET", $queryURL, ['auth_bearer' => $this->accessToken]);
         $statusCode = $response->getStatusCode();
