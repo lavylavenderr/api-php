@@ -2,6 +2,7 @@
     "require": {
         "vlucas/phpdotenv": "^5.5",
         "predis/predis": "^2.2",
-        "symfony/http-client": "^7.0"
+        "symfony/http-client": "^7.0",
+        "delight-im/base64": "^1.0"
     }
 }

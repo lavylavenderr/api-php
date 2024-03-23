@@ -31,8 +31,14 @@ class SpotifyRouter extends BaseRouter
         $this->refreshToken = $this->redis->get("refreshToken");
     }
 
-    private function refreshTokens($credentials)
+    private function refreshTokens()
     {
+        $clientId = $_ENV["SPOTIFY_CLIENT_ID"];
+        $clientSecret = $_ENV["SPOTIFY_CLIENT_SECRET"];
+
+        $credentials = $clientId . ':' . $clientSecret;
+        $encodedCredentials = \Delight\Base64\Base64::encode($credentials);
+
         $url = "https://accounts.spotify.com/api/token";
         $response = $this->httpClient->request("POST", $url, [
             'query' => [
@@ -40,7 +46,7 @@ class SpotifyRouter extends BaseRouter
                 'grant_type' => 'refresh_token'
             ],
             'headers' => [
-                'Authorization' => "Basic ". $credentials    
+                'Authorization' => "Basic" . " " . $encodedCredentials
             ],    
         ]);
         $responseData = json_decode($response->getContent(), true);
@@ -70,7 +76,11 @@ class SpotifyRouter extends BaseRouter
     public function search()
     {
         if (!$this->redis->exists("accessToken")) {
-            $this->respondWithJson(json_encode(array("success" => false, "message" => "No Token")), 400);
+            if (!$this->redis->exists("refreshToken")) {
+                $this->respondWithJson(json_encode(array("success" => false, "message" => "No Token")), 200);
+            } else {
+                $this->refreshTokens();
+            }
         }
 
         $params = $this->getQueryStringParams() ?: [];
@@ -82,21 +92,15 @@ class SpotifyRouter extends BaseRouter
         $userQuery = urlencode($query);
         $queryURL = "https://api.spotify.com/v1/search?q={$query}&type=track&limit=10";
 
-        $clientId = $_ENV["SPOTIFY_CLIENT_ID"];
-        $clientSecret = $_ENV["SPOTIFY_CLIENT_SECRET"];
-
-        $credentials = $clientId . ':' . $clientSecret;
-        $encodedCredentials = base64_encode($credentials);
-        
         $response = $this->httpClient->request("GET", $queryURL, ['auth_bearer' => $this->accessToken]);
         $statusCode = $response->getStatusCode();
 
         if ($statusCode === 401) {
-            $this->refreshTokens($encodedCredentials);
+            $this->refreshTokens();
             $response = $this->httpClient->request("GET", $queryURL, ['auth_bearer' => $this->accessToken]);
         }
 
-        $responseData = json_decode($response->getContent(), true);
+        $responseData = json_decode($response->getContent(false), true);
         $filteredTracks = [];
 
         foreach ($responseData['tracks']['items'] as $item) {
@@ -125,21 +129,20 @@ class SpotifyRouter extends BaseRouter
         }
 
         if (!$this->redis->exists("accessToken")) {
-            $this->respondWithJson(json_encode(array("success" => false, "message" => "No Token")), 200);
+            if (!this->redis->exists("refreshToken")) {
+                $this->respondWithJson(json_encode(array("success" => false, "message" => "No Token")), 200);
+            } else {
+                $this->refreshToken();
+            }
         }
 
         $url = "https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=short_term";
-        $clientId = $_ENV["SPOTIFY_CLIENT_ID"];
-        $clientSecret = $_ENV["SPOTIFY_CLIENT_SECRET"];
-
-        $credentials = $clientId . ':' . $clientSecret;
-        $encodedCredentials = base64_encode($credentials);
-
+        
         $response = $this->httpClient->request("GET", $url, ['auth_bearer' => $this->accessToken]);
         $statusCode = $response->getStatusCode();
 
         if ($statusCode === 401) {
-            $this->refreshTokens($encodedCredentials);
+            $this->refreshTokens();
             $response = $this->httpClient->request("GET", $url, ['auth_bearer' => $this->accessToken]);
         }
 
@@ -176,11 +179,11 @@ class SpotifyRouter extends BaseRouter
 
         $url = "https://accounts.spotify.com/api/token";
         $credentials = $clientId . ':' . $clientSecret;
-        $encodedCredentials = base64_encode($credentials);
+        $encodedCredentials = \Delight\Base64\Base64::encode($credentials);
 
         $response = $this->httpClient->request("POST", $url, [
             'headers' => [
-                'Authorization' => "Basic ". $encodedCredentials    
+                'Authorization' => "Basic" . " " . $encodedCredentials    
             ],
             'query' => [
                 'grant_type' => 'authorization_code',
