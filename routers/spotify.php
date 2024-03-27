@@ -12,7 +12,13 @@ class SpotifyRouter extends BaseRouter
     public function __construct()
     {
         $this->httpClient = HttpClient::Create();
-        $this->redis = new Client("tcp://" . $_ENV["REDIS_URL"]);
+        $this->redis = new Client([
+            'scheme' => 'tcp',
+            'host' => $_ENV["REDIS_HOST"],
+            'port' => $_ENV["REDIS_PORT"],
+            'username' => $_ENV["REDIS_USER"],
+            'password' => $_ENV["REDIS_PASSWORD"]
+        ]);
         $this->loadTokensFromRedis();
 
         if ($_SERVER["REQUEST_METHOD"] !== "GET" && $_SERVER["REQUEST_METHOD"] !== "POST") {
