@@ -3,6 +3,8 @@
         "vlucas/phpdotenv": "^5.5",
         "predis/predis": "^2.2",
         "symfony/http-client": "^7.0",
-        "delight-im/base64": "^1.0"
+        "delight-im/base64": "^1.0",
+        "php": ">=7.4",
+        "ext-mbstring": "*"
     }
 }
